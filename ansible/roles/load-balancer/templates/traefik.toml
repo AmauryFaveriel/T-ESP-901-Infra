@@ -1,0 +1,29 @@
+[entryPoints]
+  [entryPoints.web]
+    address = ":{{ load_balancer_port }}"
+    [entryPoints.web.http]
+      [entryPoints.web.http.redirections]
+        [entryPoints.web.http.redirections.entryPoint]
+          to = "websecure"
+          scheme = "https"
+          permanent = true
+
+  [entryPoints.websecure]
+    address = ":{{ load_balancer_port_securized }}"
+      [entryPoints.websecure.http.tls]
+        certResolver = "default"
+
+[api]
+  insecure = true
+  debug = true
+
+[providers]
+  [providers.file]
+    directory = "/etc/traefik"
+
+[certificatesResolvers]
+  [certificatesResolvers.default]
+    [certificatesResolvers.default.acme]
+      email = "{{ certificate_acme_mail }}"
+      storage = "/etc/traefik/{{ certificate_acme_file }}"
+    [certificatesResolvers.default.acme.tlsChallenge]

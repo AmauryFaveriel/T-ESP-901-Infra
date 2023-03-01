@@ -1,0 +1,9 @@
+
+back_end_user: "{{ docker_users[0] }}"
+back_end_group: "{{ back_end_user }}"
+back_end_directory: "/home/{{ back_end_user }}"
+
+back_end_docker_image: "{{ docker_username }}/{{ back_end_docker_image_name }}"
+back_end_docker_tag: "{{ back_end_docker_image_tag }}"
+
+back_end_port: 80

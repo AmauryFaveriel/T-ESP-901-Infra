@@ -1,0 +1,12 @@
+load_balancer_user: "{{ docker_users[0] }}"
+load_balancer_group: "{{ load_balancer_user }}"
+load_balancer_directory: "/home/{{ load_balancer_user }}"
+
+load_balancer_docker_image: "{{ load_balancer_docker_image_name }}"
+load_balancer_docker_tag: "{{ load_balancer_docker_image_tag }}"
+
+certificate_acme_file: acme.json
+
+load_balancer_port: 80
+load_balancer_port_securized: 443
+load_balancer_port_console: 8080

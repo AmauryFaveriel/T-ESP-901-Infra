@@ -1,0 +1,26 @@
+[http]
+  [http.routers]
+    [http.routers.backend]
+      rule = "Host(`backend.{{ domain_name }}`)"
+      service = "backend"
+{% if groups.tag_component_monitoring[0] is defined %}
+# Route only set if there is a monitoring server
+    [http.routers.monitoring]
+      rule = "Host(`monitoring.{{ domain_name }}`)"
+      service = "monitoring"
+{% endif %}
+  
+  [http.services]
+
+    [http.services.backend.loadBalancer]
+{% for backend_address in groups.tag_component_back_end if groups.tag_component_back_end is defined %}
+      [[http.services.backend.loadBalancer.servers]]
+        url = "http://{{ backend_address }}:{{ back_end_port }}/"
+{% endfor %}
+
+{% if groups.tag_component_monitoring[0] is defined %}
+# Route only set if there is a monitoring server
+    [http.services.monitoring.loadBalancer]
+      [[http.services.monitoring.loadBalancer.servers]]
+        url = "http://{{ groups.tag_component_monitoring[0] }}:{{ monitoring_client_port }}/"
+{% endif %}

@@ -1,0 +1,15 @@
+deploy:
+  stage: deploy
+  image: williamyeh/ansible:ubuntu18.04
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo $SSH_PRIVATE_KEY >> ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh/id_rsa
+  script:
+    - apt update
+    - apt install python3 python3-pip -y
+    - ansible-galaxy install -r ansible/requirement.yml
+    - pip3 install boto boto3 netaddr passlib ansible
+    - echo $VAULT_PASS >> vault.txt
+    - ls -a ~/.ssh
+    - ansible-playbook ansible/production.yml -i ansible/inventory --tags "deployment" --key-file=~/.ssh/id_rsa --user=ubuntu --vault-password-file=./vault.txt

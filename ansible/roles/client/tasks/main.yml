@@ -1,0 +1,27 @@
+---
+
+- name: Import template files
+  template:
+    src: "{{ item }}"
+    dest: "{{ client_directory }}/{{ item }}"
+    owner: "{{ client_user }}"
+    group: "{{ client_group }}"
+  with_items:
+    - telegraf.conf
+    - docker-compose.yml
+  notify: Restart docker compose
+
+- name: Import hardstate files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ client_directory }}/{{ item }}"
+    owner: "{{ client_user }}"
+    group: "{{ client_group }}"
+  with_items:
+    - docker.conf
+  notify: Restart docker compose
+
+- name: Start docker-compose
+  docker_compose:
+    project_src: "{{ client_directory }}"
+  become: yes

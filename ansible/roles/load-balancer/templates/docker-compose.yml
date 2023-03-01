@@ -1,0 +1,15 @@
+version: '2'
+services:
+  traefik:
+    image: traefik:2.3
+    command:
+      --entrypoints.web.address=:{{ load_balancer_port }}
+    ports:
+      - "{{ load_balancer_port }}:80"
+      - "{{ load_balancer_port_securized }}:443"
+      - "{{ load_balancer_port_console }}:8080"
+    volumes:
+      - ./traefik.toml:/etc/traefik/traefik.toml
+      - ./service.toml:/etc/traefik/service.toml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./{{ certificate_acme_file }}:/etc/traefik/acme.json

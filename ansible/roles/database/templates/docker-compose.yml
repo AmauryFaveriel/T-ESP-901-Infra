@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  database:
+    image: "{{ database_docker_image }}:{{ database_docker_tag }}"
+    ports:
+      - "{{ database_port }}:{{ database_port }}"
+    environment:
+      MYSQL_ROOT_PASSWORD: "{{ database_root_pass }}"
+      MYSQL_USER: "{{ database_username }}"
+      MYSQL_PASSWORD: "{{ database_password }}"
+      MYSQL_DATABASE: "{{ database_name }}"
+      
+  telegraf:
+    image: telegraf:1.16.1
+    environment:
+      HOST_NAME: "telegraf"
+      INFLUXDB_HOST: "{{ monitoring_database_uri }}"
+      INFLUXDB_PORT: "{{ monitoring_database_port }}"
+      DATABASE: "{{ monitoring_database_name }}"
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
+      - ./docker.conf:/etc/telegraf/telegraf.d/docker.conf
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "docker.group=database"

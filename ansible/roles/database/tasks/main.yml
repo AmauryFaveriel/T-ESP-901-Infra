@@ -1,0 +1,34 @@
+---
+
+- name: Ensure directory is present
+  file:
+    path: "{{ database_directory }}"
+    state: directory
+    owner: "{{ database_user }}"
+    group: "{{ database_group }}"
+
+- name: Import template files
+  template:
+    src: "{{ item }}"
+    dest: "{{ database_directory }}/{{ item }}"
+    owner: "{{ database_user }}"
+    group: "{{ database_group }}"
+  with_items:
+    - telegraf.conf
+    - docker-compose.yml
+  notify: Restart docker compose
+
+- name: Import hardstate files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ database_directory }}/{{ item }}"
+    owner: "{{ database_user }}"
+    group: "{{ database_group }}"
+  with_items:
+    - docker.conf
+  notify: Restart docker compose
+
+- name: Start docker-compose
+  docker_compose:
+    project_src: "{{ database_directory }}"
+  become: yes

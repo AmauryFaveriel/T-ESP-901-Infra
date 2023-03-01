@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  back_end:
+    image: "{{ back_end_docker_image }}:{{ back_end_docker_tag }}"
+    ports:
+      - "{{ back_end_port }}:80"
+    volumes:
+      - ./server.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./.env:/var/www/byb/.env
+      - ./script_install_back.sh:/var/www/byb/script_install_back.sh
+
+  telegraf:
+    image: telegraf:1.16.1
+    environment:
+      HOST_NAME: "telegraf"
+      INFLUXDB_HOST: "{{ monitoring_database_uri }}"
+      INFLUXDB_PORT: "{{ monitoring_database_port }}"
+      DATABASE: "{{ monitoring_database_name }}"
+    volumes:
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
+      - ./docker.conf:/etc/telegraf/telegraf.d/docker.conf
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "docker.group=back_end"

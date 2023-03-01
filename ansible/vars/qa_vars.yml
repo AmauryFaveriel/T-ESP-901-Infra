@@ -1,0 +1,13 @@
+back_end_directory: "/home/{{ back_end_user }}/back_end"
+database_directory: "/home/{{ database_user }}/database"
+load_balancer_directory: "/home/{{ load_balancer_user }}/load_balancer"
+monitoring_directory: "/home/{{ monitoring_user }}/monitoring"
+
+back_end_port: 81
+monitoring_client_port: 82
+
+env: qa
+
+domain_name: qa.mrfvrl.fr
+
+monitoring_database_uri: "{{ groups.tag_component_qa[0] }}"

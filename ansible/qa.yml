@@ -1,0 +1,14 @@
+---
+
+- name: Deploy all on qa servers
+  hosts: tag_project_byb:&tag_component_qa
+  become: yes
+  vars_files:
+    - vars/qa_vars.yml
+  roles:
+    - { role: common, tags: ["installation", "base", "qa_server"] }
+    - { role: geerlingguy.docker, tags: ["installation", "base", "qa_server"] }
+    - { role: load-balancer, tags: ["installation", "load_balancer", "qa_server"] }
+    - { role: monitoring, tags: ["installation", "monitoring", "qa_server"] }
+    - { role: database, tags: ["installation", "database", "qa_server"] }
+    - { role: back-end, tags: ["deployment", "back_end", "qa_server"] }

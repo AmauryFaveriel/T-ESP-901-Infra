@@ -1,0 +1,33 @@
+---
+
+- name: Install common and docker on all servers
+  hosts: tag_project_byb:&tag_stage_production
+  become: yes
+  roles:
+    - { role: common, tags: ["installation", "base"] }
+    - { role: geerlingguy.docker, tags: ["installation", "base"] }
+
+- name: Install load-balancer
+  hosts: tag_project_byb:&tag_stage_production:&tag_component_load_balancer
+  roles:
+    - { role: load-balancer, tags: ["installation", "load_balancer"] }
+
+- name: Install monitoring
+  hosts: tag_project_byb:&tag_stage_production:&tag_component_monitoring
+  roles:
+    - { role: monitoring, tags: ["installation", "monitoring"] }
+
+- name: Install database
+  hosts: tag_project_byb:&tag_stage_production:&tag_component_database
+  roles:
+    - { role: database, tags: ["installation", "database"] }
+
+- name: Deploy client
+  hosts: tag_project_byb:&tag_stage_production:&tag_component_client
+  roles:
+    - { role: client, tags: ["deployment", "client"] }
+
+- name: Deploy back-end
+  hosts: tag_project_byb:&tag_stage_production:&tag_component_back_end
+  roles:
+    - { role: back-end, tags: ["deployment", "back_end"] }

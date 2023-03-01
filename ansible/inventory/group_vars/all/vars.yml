@@ -1,0 +1,23 @@
+docker_users:
+  - ubuntu
+
+env: prod
+
+docker_username: amauryfaveriel
+
+back_end_docker_image_name: byb_back
+back_end_docker_image_tag: 1.1
+back_end_port: 80
+
+client_docker_image_name: byb_client
+client_docker_image_tag: 0.1
+
+database_name: byb
+database_port: 3306
+
+domain_name: mrfvrl.fr
+
+monitoring_database_uri: http://{{ groups.tag_component_database[0] }}
+monitoring_client_port: 80
+monitoring_database_port: 8086
+monitoring_database_name: monitoring_byb

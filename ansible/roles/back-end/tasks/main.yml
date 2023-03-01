@@ -1,0 +1,49 @@
+---
+
+- name: Ensure directory is present
+  file:
+    path: "{{ back_end_directory }}"
+    state: directory
+    owner: "{{ back_end_user }}"
+    group: "{{ back_end_group }}"
+
+- name: Import template files
+  template:
+    src: "{{ item }}"
+    dest: "{{ back_end_directory }}/{{ item }}"
+    owner: "{{ back_end_user }}"
+    group: "{{ back_end_group }}"
+  with_items:
+    - telegraf.conf
+    - docker-compose.yml
+  notify: Restart docker compose
+
+- name: Import .env file
+  template:
+    src: ".{{ env }}.env"
+    dest: "{{ back_end_directory }}/.env"
+    owner: "{{ back_end_user }}"
+    group: "{{ back_end_group }}"
+  notify: Restart docker compose
+
+- name: Import hardstate files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ back_end_directory }}/{{ item }}"
+    owner: "{{ back_end_user }}"
+    group: "{{ back_end_group }}"
+  with_items:
+    - docker.conf
+    - server.conf
+    - script_install_back.sh
+  notify: Restart docker compose
+  
+- name: Start docker-compose
+  docker_compose:
+    project_src: "{{ back_end_directory }}"
+  become: yes
+
+- name: Run install back_end script
+  shell:
+    cmd: "docker-compose exec back_end ./script_install_back.sh"
+    chdir: "{{ back_end_directory }}"

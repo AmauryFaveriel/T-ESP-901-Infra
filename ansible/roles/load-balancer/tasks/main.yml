@@ -1,0 +1,43 @@
+---
+
+- name: Ensure directory is present
+  file:
+    path: "{{ load_balancer_directory }}"
+    state: directory
+    owner: "{{ load_balancer_user }}"
+    group: "{{ load_balancer_group }}"
+
+- name: Import static conf for traefik
+  template:
+    src: traefik.toml
+    dest: "{{ load_balancer_directory }}/traefik.toml"
+    owner: "{{ load_balancer_user }}"
+    group: "{{ load_balancer_group }}"
+
+- name: Import dynamic conf for traefik
+  template:
+    src: "{{ env }}.service.toml.j2"
+    dest: "{{ load_balancer_directory }}/service.toml"
+    owner: "{{ load_balancer_user }}"
+    group: "{{ load_balancer_group }}"
+
+- name: Create certificate acme file
+  file:
+    path: "{{ load_balancer_directory }}/{{ certificate_acme_file }}"
+    owner: "{{ load_balancer_user }}"
+    group: "{{ load_balancer_group }}"
+    state: touch
+    mode: '0600'
+
+- name: Import docker-compose
+  template:
+    src: docker-compose.yml
+    dest: "{{ load_balancer_directory }}/docker-compose.yml"
+    owner: "{{ load_balancer_user }}"
+    group: "{{ load_balancer_group }}"
+  notify: Restart docker compose
+
+- name: Start docker-compose
+  docker_compose:
+    project_src: "{{ load_balancer_directory }}"
+  become: yes

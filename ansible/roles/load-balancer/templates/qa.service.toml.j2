@@ -1,0 +1,18 @@
+[http]
+  [http.routers]
+    [http.routers.backend]
+      rule = "Host(`backend.{{ domain_name }}`)"
+      service = "backend"
+    [http.routers.monitoring]
+      rule = "Host(`monitoring.{{ domain_name }}`)"
+      service = "monitoring"
+  
+  [http.services]
+
+    [http.services.backend.loadBalancer]
+      [[http.services.backend.loadBalancer.servers]]
+        url = "http://{{ groups.tag_component_qa[0] }}:{{ back_end_port }}/"
+
+    [http.services.monitoring.loadBalancer]
+      [[http.services.monitoring.loadBalancer.servers]]
+        url = "http://{{ groups.tag_component_qa[0] }}:{{ monitoring_client_port }}/"

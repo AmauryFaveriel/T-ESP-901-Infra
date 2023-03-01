@@ -1,0 +1,7 @@
+database_user: "{{ docker_users[0] }}"
+database_group: "{{ database_user }}"
+database_directory: "/home/{{ database_user }}"
+
+database_docker_image: mariadb
+database_docker_tag: latest
+database_docker_port: 3306
